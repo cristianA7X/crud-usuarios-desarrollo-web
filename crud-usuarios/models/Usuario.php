@@ -46,16 +46,33 @@ class Usuario
             $sql = "SELECT u.id, u.nombre, u.email, u.dni, u.activo, r.nombre as rol_nombre 
                     FROM usuario u 
                     INNER JOIN rol r ON u.rol_id = r.id 
-                    ORDER BY u.fecha_alta DESC";
+                    ORDER BY u.id ASC";
             
             $stmt = $this->db->query($sql);
             
             // Retornamos todos los registros
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) 
+        } 
+        catch (PDOException $e) 
         {
             error_log("Error al listar usuarios: " . $e->getMessage());
             return [];
+        }
+    }
+
+    public function obtenerPorId($id) 
+    {
+        try 
+        {
+            $sql = "SELECT id, nombre, email, dni, rol_id FROM usuario WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id' => $id]);
+            
+            // Usamos fetch() normal porque es un solo registro, no un array de registros
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener por ID: " . $e->getMessage());
+            return false;
         }
     }
 

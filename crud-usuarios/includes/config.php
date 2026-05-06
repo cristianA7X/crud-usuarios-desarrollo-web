@@ -12,7 +12,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // 2. URL Base del proyecto
-define('BASE_URL', 'http://localhost/crud-usuarios/');
+define('BASE_URL', 'http://localhost/crud-usuarios-desarrollo-web/crud-usuarios/');
 
 // 3. Configuración de Sesiones Seguras
 define('SESSION_NAME', 'admin_session_js');

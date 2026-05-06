@@ -2,10 +2,12 @@
 // Usamos __DIR__ para asegurarnos de que la ruta sea correcta desde cualquier lado
 require_once __DIR__ . '/../includes/db.php'; 
 
-class Rol {
+class Rol 
+{
     private $db;
 
-    public function __construct() {
+    public function __construct() 
+    {
         // Obtenemos la conexión PDO a través del método estático del Singleton
         $this->db = Database::getConnection(); 
     }
@@ -13,8 +15,10 @@ class Rol {
     /**
      * Obtiene todos los roles activos de la base de datos
      */
-    public function getRoles() {
-        try {
+    public function getRoles() 
+    {
+        try 
+        {
             // Usamos 'rol' que es el nombre en tu SQL
             $sql = "SELECT id, nombre, descripcion FROM rol WHERE activo = 1"; 
             $stmt = $this->db->query($sql);
@@ -27,3 +31,4 @@ class Rol {
         }
     }
 }
+?>
