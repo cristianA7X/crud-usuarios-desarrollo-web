@@ -1,66 +1,25 @@
-# 📘 Documentación Técnica de Integración - Backend de Usuarios
+# CRUD de Usuarios y Roles
 
-Esta guía detalla la arquitectura del backend, los puntos de acceso (endpoints) y los procedimientos necesarios para conectar la interfaz de usuario con la lógica de negocio y la base de datos.
+Sistema de gestión de usuarios, roles y autenticación armado en PHP puro.
 
----
+## Estructura del Proyecto
 
-## 1. Estructura de Archivos del Sistema
-El backend se organiza bajo una arquitectura de separación de responsabilidades:
+El proyecto separa la lógica del backend (MVC) de las vistas del frontend[cite: 2]:
 
-- **`/includes`**: Configuraciones globales y conexión a base de datos.
-- **`/models`**: Clases de acceso a datos (Queries SQL).
-- **`/controllers`**: Procesadores de peticiones y lógica de control.
+### Backend
+*   `/controllers`: Lógica de la aplicación y peticiones (`UsuarioController.php`, `Logout.php`)[cite: 2].
+*   `/models`: Entidades y acceso a datos (`Usuario.php`, `Rol.php`)[cite: 2].
+*   `/includes`: Configuración y conexión a la base de datos (`config.php`, `db.php`)[cite: 2].
 
----
+### Frontend (Vistas)
+*   **Archivos en la raíz:**
+    *   `index.php`: Pantalla de inicio / Login[cite: 2].
+    *   `registro.php`: Formulario para alta de usuarios[cite: 2].
+*   **Carpeta `/pages/roles/`:** Vistas del sistema una vez autenticado.
+    *   `dashboard.php`: Panel principal de gestión[cite: 2].
+    *   `editar.php`: Interfaz para modificar la información[cite: 2].
 
-## 2. Configuración Global
-El archivo `includes/config.php` centraliza las constantes del sistema. 
-- **`BASE_URL`**: Se debe utilizar para todas las rutas absolutas en enlaces y redirecciones.
-- **Sesiones**: La sesión se inicia automáticamente. Se han configurado cookies seguras (`HttpOnly`, `SameSite=Strict`) para proteger la identidad del usuario.
-
----
-
-## 3. Integración de Formularios (POST)
-Todas las solicitudes de envío de datos deben dirigirse a `controllers/UsuarioController.php` utilizando el método **POST**.
-
-### Requisito: Campo de Acción
-Cada formulario debe incluir un campo oculto que indique la operación a realizar:
-`<input type="hidden" name="accion" value="NOMBRE_ACCION">`.
-
-### Acciones Disponibles y Parámetros:
-
-| Acción (`accion`) | Campos Requeridos (`name`) | Resultado |
-| :--- | :--- | :--- |
-| **`crear`** | `nombre`, `email`, `password`, `dni`, `rol_id` | Registra un usuario y genera hash de contraseña. |
-| **`actualizar`** | `id`, `nombre`, `email`, `dni`, `rol_id` | Modifica los datos de la instancia seleccionada. |
-| **`eliminar`** | `id` | Borrado lógico (establece `activo = 0`). |
-| **`login`** | `email`, `password` | Valida credenciales y genera variables de sesión. |
-
----
-
-## 4. Visualización de Datos (Lectura)
-Para mostrar información en las tablas y selectores, el frontend debe instanciar los modelos correspondientes:
-
-### Listado de Usuarios (Tablas)
-Se debe utilizar el método `listar()` de la clase `Usuario`. Este método realiza un `INNER JOIN` con la tabla `rol` para obtener el nombre del rol asociado.
-- **Retorno**: Array asociativo con `id`, `nombre`, `email`, `dni`, `activo` y `rol_nombre`.
-
-### Selección de Roles (Selects)
-Se debe utilizar el método `getRoles()` de la clase `Rol` para obtener los roles activos en el sistema.
-- **Campos disponibles**: `id`, `nombre`, `descripcion`.
-
----
-
-## 5. Gestión de Notificaciones y Feedback
-El controlador utiliza la sesión para enviar mensajes de éxito o error tras las operaciones.
-
-- **`$_SESSION['mensaje']`**: Texto con la confirmación de la operación (ej: "Usuario creado correctamente").
-- **`$_SESSION['error']`**: Texto descriptivo cuando el login falla (ej: "Email o contraseña incorrectos").
-
----
-
-## 6. Seguridad y Procesamiento
-- **Sanitización**: El controlador aplica automáticamente `trim()` a todas las entradas para eliminar espacios accidentales.
-- **Inyección SQL**: El backend utiliza sentencias preparadas (PDO) en todas las consultas para garantizar la seguridad de los datos.
-- **Hasheo**: Las contraseñas se almacenan mediante el algoritmo `PASSWORD_DEFAULT` y se validan con `password_verify`.
-- **Cierre de Sesión**: Para desconectar al usuario, se debe redirigir la aplicación al archivo `controllers/Logout.php`.
+## Instalación y Uso
+1. Clonar el repositorio en el directorio de tu servidor web local.
+2. Importar el archivo `gestion_usuarios.sql` en tu motor de base de datos para crear las tablas[cite: 2].
+3. Actualizar las credenciales de conexión en `/includes/db.php`[cite: 2].
